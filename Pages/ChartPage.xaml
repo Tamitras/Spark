@@ -1,0 +1,49 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Spark.Pages.ChartPage"
+             Title="ChartPage"
+             BackgroundColor="Gray">
+    <Grid>
+        <!-- Grid für Überschriften und CollectionView -->
+        <Grid.RowDefinitions>
+            <!-- Zeile für Überschriften -->
+            <RowDefinition Height="Auto" />
+            <!-- Zeile für CollectionView -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Überschriften -->
+        <Grid Grid.Row="0" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" /> <!-- Neue Spalte für das Datum -->
+            </Grid.ColumnDefinitions>
+            <!--<Label Text="ID" Grid.Column="0" />
+            <Label Text="Timestamp" Grid.Column="1" />-->
+            <Label Text="HT (kWh)" Grid.Column="0" FontSize="Large" HorizontalOptions="CenterAndExpand" />
+            <Label Text="NT (kWh)" Grid.Column="1" FontSize="Large" HorizontalOptions="CenterAndExpand" />
+            <Label Text="Datum" Grid.Column="2" FontSize="Large" HorizontalOptions="CenterAndExpand" /> <!-- Überschrift für das Datum -->
+        </Grid>
+
+        <!-- CollectionView für Daten -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding SparkInfo}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" /> <!-- Neue Spalte für das Datum -->
+                        </Grid.ColumnDefinitions>
+                        <!--<Label Text="{Binding ID}" Grid.Column="0" />
+                        <Label Text="{Binding TimeStamp}" Grid.Column="1" />-->
+                        <Label Text="{Binding HT, StringFormat='{0} kWh'}" Grid.Column="0" HorizontalOptions="CenterAndExpand" />
+                        <Label Text="{Binding NT, StringFormat='{0} kWh'}" Grid.Column="1" HorizontalOptions="CenterAndExpand" />
+                        <Label Text="{Binding TimeStamp}" Grid.Column="2" HorizontalOptions="CenterAndExpand" /> <!-- Datenbindung für das Datum -->
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
