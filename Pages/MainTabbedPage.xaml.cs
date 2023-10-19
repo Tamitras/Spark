@@ -1,16 +1,17 @@
-﻿// In MainTabbedPage.xaml.cs
-using Spark.Pages;
+﻿namespace Spark.Pages;
 using Spark.ViewModels;
 
 public partial class MainTabbedPage : TabbedPage
 {
-    public MainPageViewModel MainPageViewModel { get; set; }
+    public MainPageVM MainPageViewModel { get; set; }
     public ChartPageViewModel ChartPageViewModel { get; set; }
 
     public MainTabbedPage()
     {
+        InitializeComponent();
+
         // Erstellen der ViewModels
-        MainPageViewModel = new MainPageViewModel(new ChartPageViewModel());
+        MainPageViewModel = new MainPageVM(new ChartPageViewModel());
         ChartPageViewModel = MainPageViewModel.ChartPageViewModel;
 
         // Erstellen der Seiten mit den ViewModels

@@ -57,20 +57,30 @@
 		<PackageReference Include="SkiaSharp" Version="2.88.6" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
-		<PackageReference Include="Mopups" Version="1.1.1" />
+		<PackageReference Include="Google.Cloud.Vision.V1" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Pages\" />
-		<None Remove="Service\" />
 		<None Remove="ViewModels\" />
-		<None Remove="Pages\Popups\" />
 		<None Remove="Class\" />
+		<None Remove="Resources\Raw\GVision.json" />
+		<None Remove="ViewModels\Base\" />
+		<None Remove="ViewModels\Settings\" />
+		<None Remove="Pages\Main\" />
+		<None Remove="ViewModels\List\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Pages\" />
-		<Folder Include="Service\" />
 		<Folder Include="ViewModels\" />
-		<Folder Include="Pages\Popups\" />
 		<Folder Include="Class\" />
+		<Folder Include="ViewModels\Base\" />
+		<Folder Include="ViewModels\Settings\" />
+		<Folder Include="Pages\Main\" />
+		<Folder Include="ViewModels\List\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <BundleResource Include="Resources\Raw\GVision.json" />
+	</ItemGroup>
+
 </Project>

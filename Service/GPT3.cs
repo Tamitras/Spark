@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 public class GPT3
@@ -22,7 +21,7 @@ public class GPT3
                     {
                     new { role = "user", content = prompt }
                 },
-                    temperature = 0.2
+                    temperature = 0.8
                 };
 
                 var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");

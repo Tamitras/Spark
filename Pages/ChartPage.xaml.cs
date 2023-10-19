@@ -8,9 +8,8 @@ public partial class ChartPage : ContentPage
 
     public ChartPage(ChartPageViewModel vm)
 	{
-		InitializeComponent();
-
-		this.ViewModel = vm;
+        InitializeComponent();
+        this.ViewModel = vm;
 		BindingContext = ViewModel;
 	}
 }

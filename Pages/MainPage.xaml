@@ -2,16 +2,15 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Spark.Pages.MainPage"
+             xmlns:viewmodels="clr-namespace:Spark.ViewModels" xmlns:class="clr-namespace:Spark.Class"
+             x:DataType="viewmodels:MainPageVM"
              IconImageSource="appicon.png"
              Title="MainPage"
-             BackgroundColor="Gray">
+             BackgroundColor="DarkGray">
 
     <Grid Padding="10">
         <!-- Informationen -->
-        <StackLayout Spacing="10">
-
-            <Label Text="Anzahl Messungen:" FontSize="18"/>
-            <Label Text="{Binding MeasurementCount}" FontSize="24" HorizontalTextAlignment="Center"/>
+        <StackLayout Spacing="5">
 
             <Label Text="Zählerstand:" FontSize="18"/>
             <Label Text="{Binding CurrentMeterReadingInterpreted}" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
@@ -19,21 +18,96 @@
             <Label Text="Aktueller Zählerstand:" FontSize="18"/>
             <Label Text="{Binding CurrentMeterReading}" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
 
-            <StackLayout>
+            <ListView ItemsSource="{Binding Photos}" IsVisible="{Binding ShowList}" RowHeight="200" BackgroundColor="Gray" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:PhotoVM">
+                        <ViewCell >
+                            <FlexLayout Margin="2" Direction="Row">
+                                <Image Source="{Binding Thumbnail}" Rotation="90" MaximumWidthRequest="180" Aspect="AspectFit" VerticalOptions="Fill" />
+                                <StackLayout Padding="1" Orientation="Vertical" HorizontalOptions="FillAndExpand" MaximumWidthRequest="180">
+                                    <Label Text="{Binding Name, StringFormat='Name: {0}'}" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Status: " FontAttributes="Bold" />
+                                        <Label Text="{Binding StatusString}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding StatusString}" Value="Done">
+                                                    <Setter Property="TextColor" Value="LightGreen" />
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Label" Binding="{Binding StatusString}" Value="Processing">
+                                                    <Setter Property="TextColor" Value="Orange" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </StackLayout>
+                                    <Label Text="{Binding FormattedProcessingTime, StringFormat='Zeit: {0}'}" />
+                                    <Label Text="{Binding Bitmap.Height, StringFormat='Höhe: {0} px'}" />
+                                    <Label Text="{Binding Bitmap.Width, StringFormat='Breite: {0} px'}" />
+                                    <Label Text="{Binding SizeOriginal, StringFormat='Original: {0} mb'}" />
+                                    <Label Text="{Binding SizeThumbnail, StringFormat='Thumbnail: {0} mb'}" />
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Zählerstand: " FontAttributes="Bold" />
+                                                <Span Text="{Binding FirstResult}" FontAttributes="Bold"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
 
+                                    <ListView ItemsSource="{Binding RankedList}" BackgroundColor="Transparent">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:DataType="class:NumberWithScore">
+                                                <ViewCell>
+                                                    <Label HorizontalOptions="FillAndExpand" MaximumWidthRequest="180" BackgroundColor="DarkBlue" Text="{Binding NumberSequence, StringFormat='Zählerstand: {0}'}" />
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+
+                                </StackLayout>
+                            </FlexLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+
+
+            <StackLayout>
                 <!-- Activity Indicator -->
                 <ActivityIndicator x:Name="Indicator"
                            Color="Orange"
                            Grid.Row="0" 
                            Grid.Column="0" 
                            IsRunning="True" 
-                           IsVisible="False" 
+                           IsVisible= "{Binding IsVisible}" 
                            VerticalOptions="CenterAndExpand" 
                            HorizontalOptions="CenterAndExpand"/>
 
                 <Label Text="{Binding Status}" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
-
             </StackLayout>
+
+            <!-- HT Picker -->
+            <Picker x:Name="HtPicker" IsVisible="false"
+                Title="HT"
+                ItemsSource="{Binding HTValues}"
+                SelectedItem="{Binding SelectedHTItem}"
+                SelectedIndexChanged="OnHtPickerSelectedIndexChanged"
+                ItemDisplayBinding="{Binding NumberSequence}">
+                <!-- Die Einträge werden durch das Binding hinzugefügt -->
+            </Picker>
+
+            <!-- NT Picker -->
+            <Picker x:Name="NtPicker"  IsVisible="false"
+                Title="NT"
+                ItemsSource="{Binding NTValues}"
+                SelectedItem="{Binding SelectedNTItem}"
+                SelectedIndexChanged="OnNtPickerSelectedIndexChanged"
+                ItemDisplayBinding="{Binding NumberSequence}">
+                <!-- Die Einträge werden durch das Binding hinzugefügt -->
+            </Picker>
+
+
         </StackLayout>
 
         <!--Floating Action Button (FAB)-->

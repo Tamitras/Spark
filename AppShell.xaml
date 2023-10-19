@@ -4,7 +4,7 @@
        xmlns:local="clr-namespace:Spark.Pages"
        x:Class="Spark.AppShell">
 
-    <ShellContent Title="MeineAPp"
+    <ShellContent Title="MeineApp"
                   Route="items"
                   ContentTemplate="{DataTemplate local:MainTabbedPage}" />
 

@@ -1,15 +1,10 @@
-﻿
+﻿namespace Spark;
 using Spark.Pages;
 
-namespace Spark
+public partial class App : Application
 {
-    public partial class App : Application
+    public App()
     {
-        public App()
-        {
-            InitializeComponent();
-
-            MainPage = new MainTabbedPage();
-        }
+        MainPage = new MainTabbedPage();
     }
 }

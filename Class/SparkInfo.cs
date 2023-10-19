@@ -1,6 +1,9 @@
 ﻿
 namespace Spark.Class
 {
+	/// <summary>
+	/// Holds all Info about a Spark
+	/// </summary>
 	public class SparkInfo
 	{
 		public Guid ID { get; } = Guid.NewGuid();
