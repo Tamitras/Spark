@@ -15,10 +15,6 @@ public partial class MainPage : ContentPage
         this.MainPageVM = vm;
 
         BindingContext = MainPageVM;
-
-        this.MainPageVM.HTValues = new System.Collections.ObjectModel.ObservableCollection<NumberWithScore>();
-        this.MainPageVM.NTValues = new System.Collections.ObjectModel.ObservableCollection<NumberWithScore>();
-
     }
 
     async Task StartProcess()
@@ -71,28 +67,6 @@ public partial class MainPage : ContentPage
 
         //    this.OpenValidatePopup(result);
         //}
-    }
-
-    void OpenValidatePopup(List<NumberWithScore> rankedList)
-    {
-        try
-        {
-            // Fügt die Elemente aus rankedList den Pickern hinzu
-            foreach (var item in rankedList)
-            {
-                this.MainPageVM.HTValues.Add(item);
-                this.MainPageVM.NTValues.Add(item);
-
-            }
-
-            this.MainPageVM.SelectedHTItem = this.MainPageVM.HTValues.FirstOrDefault();
-            this.MainPageVM.SelectedNTItem = this.MainPageVM.NTValues.FirstOrDefault();
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Fehler: {ex}");
-        }
     }
 
     void OnHtPickerSelectedIndexChanged(System.Object sender, System.EventArgs e)

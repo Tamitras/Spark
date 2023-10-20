@@ -11,13 +11,13 @@ namespace Spark.ViewModels;
 public class MainPageVM : BaseVM
 {
     public ChartPageViewModel ChartPageViewModel { get; set; }
-    public SettingVM SettingVM { get; set; } = new SettingVM();
+    public SettingVM SettingVM { get; set; }
 
-    public MainPageVM(ChartPageViewModel chartPageVM)
+    public MainPageVM(ChartPageViewModel chartPageVM, SettingVM settingVM)
     {
         this.ChartPageViewModel = chartPageVM;
-        this.HTValues = new ObservableCollection<NumberWithScore>();
-        this.NTValues = new ObservableCollection<NumberWithScore>();
+        this.SettingVM = settingVM;
+
         this.ShowList = false;
         this.Photos.CollectionChanged += Photos_CollectionChanged;
 
@@ -187,7 +187,7 @@ public class MainPageVM : BaseVM
             {
                 var extractedText = await vision.RecognizeTextAsync(photo.ByteArrayThumbnail);
 
-                var rankedList = Helper.GetRankedPotentialNumbers(extractedText);
+                var rankedList = Helper.GetRankedPotentialNumbers(extractedText, SettingVM.DigitCount);
 
                 photo.FirstResult = rankedList.FirstOrDefault()?.NumberSequence;
                 photo.RankedList = rankedList;

@@ -5,7 +5,7 @@
              xmlns:viewmodels="clr-namespace:Spark.ViewModels" xmlns:class="clr-namespace:Spark.Class"
              x:DataType="viewmodels:MainPageVM"
              IconImageSource="appicon.png"
-             Title="MainPage"
+             Title="Home "
              BackgroundColor="DarkGray">
 
     <Grid Padding="10">

@@ -8,6 +8,18 @@ namespace Spark.ViewModels.Settings
         {
             // Default-Werte setzen
             PhotoCounter = 1;
+            DigitCount = 6;
+        }
+
+        private int _digitCount;
+        public int DigitCount
+        {
+            get => _digitCount;
+            set
+            {
+                _digitCount = value;
+                OnPropertyChanged(nameof(DigitCount));
+            }
         }
 
         private int _photoCounter;

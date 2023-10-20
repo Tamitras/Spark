@@ -58,6 +58,7 @@
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
 		<PackageReference Include="Google.Cloud.Vision.V1" Version="3.3.0" />
+		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Pages\" />
@@ -68,6 +69,7 @@
 		<None Remove="ViewModels\Settings\" />
 		<None Remove="Pages\Main\" />
 		<None Remove="ViewModels\List\" />
+		<None Remove="Pages\Settings\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Pages\" />
@@ -77,6 +79,7 @@
 		<Folder Include="ViewModels\Settings\" />
 		<Folder Include="Pages\Main\" />
 		<Folder Include="ViewModels\List\" />
+		<Folder Include="Pages\Settings\" />
 	</ItemGroup>
 
 	<ItemGroup>

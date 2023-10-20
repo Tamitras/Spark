@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
-using Microsoft.Maui.Storage;
+using F23.StringSimilarity;
 using SkiaSharp;
 using Spark.Class;
 
@@ -15,7 +15,6 @@ public class Helper
         double sizeInKB = sizeInBytes / 1024.0;
         double sizeInMB = sizeInKB / 1024.0;
 
-        
         Console.WriteLine($"Bildgröße: {sizeInBytes} Bytes, {sizeInKB:F2} KB, {sizeInMB:F2} MB");
 
         return sizeInKB;
@@ -72,58 +71,22 @@ public class Helper
 
     public static ImageSource ConvertToThumbnail(byte[] image)
     {
-        int newWidth = 1280;
-        int newHeight = 800;
+        // TODO: Thumbnail creation depending on internetspeed
+        // maximum 3 sec
+
+        // lower resolution for lower upload
+
+        // 2,5sec --> 25mbits upload
+        int newWidth = 1920;
+        int newHeight = 1024;
+
+        // higher resolution for better upload
+
+
         var temp = ResizeImage(image, newWidth, newHeight);
 
         return ToImageSource(temp);
     }
-
-    public static byte[] ResizeImageToMaxSize(byte[] originalImageBytes, int maxFileSizeKb)
-    {
-        int quality = 100;  // Startqualität für JPEG-Kompression
-        double factor = 0.0;
-        byte[] resizedImageBytes = null;
-
-        while (quality > 0)  // Weitermachen, bis die Qualität 0 erreicht (sollte nie passieren)
-        {
-            factor = quality / 100.0;
-            // Bild aus Byte-Array dekodieren
-            using var inputMemoryStream = new MemoryStream(originalImageBytes);
-            using var originalBitmap = SKBitmap.Decode(inputMemoryStream);
-
-            // Neue Abmessungen berechnen, um die Proportionen beizubehalten
-            double ratio = (double)maxFileSizeKb / Math.Max(originalBitmap.Width, originalBitmap.Height);
-
-            ratio = ratio * factor;
-            int newWidth = (int)(originalBitmap.Width * ratio);
-            int newHeight = (int)(originalBitmap.Height * ratio);
-
-            // Bildgröße ändern
-            using var resizedBitmap = originalBitmap.Resize(new SKImageInfo(newWidth, newHeight), SKFilterQuality.High);
-            using var resizedImage = SKImage.FromBitmap(resizedBitmap);
-
-            // Bild in JPEG mit der aktuellen Qualität komprimieren
-            using var data = resizedImage.Encode(SKEncodedImageFormat.Png, 100);
-
-            double fileSizeInKB = Helper.GetFileSizeInKB(data.ToArray());
-            Console.WriteLine($"File size new: {fileSizeInKB} KB of {maxFileSizeKb}");
-
-            // Wenn die Dateigröße unter dem Maximum liegt, aber immer noch über einem akzeptablen Wert liegt, beenden
-            if (fileSizeInKB <= maxFileSizeKb)
-            {
-                resizedImageBytes = data.ToArray();
-                break;
-            }
-
-            // Qualität für den nächsten Durchlauf reduzieren
-            quality -= 2;
-        }
-
-        return resizedImageBytes;
-    }
-
-
 
     public static double GetFileSizeInKB(byte[] fileBytes)
     {
@@ -132,79 +95,132 @@ public class Helper
         return fileBytes.Length / 1024.0;
     }
 
-    public static ObservableCollection<NumberWithScore> GetRankedPotentialNumbers(string input)
+    /// <summary>
+    /// Finds the best match for a specific string
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="strings"></param>
+    /// <returns></returns>
+    public static (string bestMatch, double highestSimilarity) FindBestMatch(string target, List<string> strings)
+    {
+        string bestMatch = null;
+        double highestSimilarity = 0;
+
+        NormalizedLevenshtein lev = new NormalizedLevenshtein();
+
+        foreach (var str in strings)
+        {
+            double similarity = lev.Similarity(target, str);
+            Console.WriteLine($"String: {str}, Similarity: {similarity}");
+
+            if (similarity > highestSimilarity)
+            {
+                highestSimilarity = similarity;
+                bestMatch = str;
+            }
+        }
+
+        return (bestMatch, highestSimilarity);
+    }
+
+    public static ObservableCollection<NumberWithScore> GetRankedPotentialNumbers(string input, int estimatedDigits = 6)
     {
         try
         {
             string pattern = @"(?<=\n)(\d+(\.\d+)?)([a-zA-Z]{0,3})?(?=\n)";
+
+            //Console.WriteLine(input);
+
             MatchCollection matches = Regex.Matches(input, pattern);
+            List<string> matchList = matches.Cast<Match>().Select(match => match.Value).ToList();
 
             Dictionary<string, NumberWithScore> uniqueResults = new Dictionary<string, NumberWithScore>();
             ObservableCollection<NumberWithScore> obsList = new ObservableCollection<NumberWithScore>();
 
-            foreach (Match match in matches)
-            {
-                int points = 0;
-                var number = match.Groups[1].Value;
-                var suffix = match.Groups[3].Value;
+            var res = FindBestMatch("0002723.3", matchList);
 
-                // Punkte für Länge der Zahl ohne Dezimalstellen
-                var numberWithoutDecimal = number.Split('.')[0];
-                int length = numberWithoutDecimal.Length;
-                if (length >= 6 && length <= 8)
-                {
-                    points += 150;
-                }
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine($"BestMatch: {res.bestMatch} {res.highestSimilarity}");
+            obsList.Add(new NumberWithScore() { NumberSequence = res.bestMatch, Score = res.highestSimilarity });
+            Console.WriteLine("-------------------------------------------------");
 
-                // Punkte für kwh
-                if (suffix.ToLower() == "kwh")
-                {
-                    points += 100;
-                }
+            //foreach (Match match in matches)
+            //{
 
-                // Punkte für Dezimaltrenner
-                if (number.Contains("."))
-                {
-                    points += 50;
-                }
 
-                // Punkte für 6-7 Ziffern vor dem Dezimaltrenner und nur eine danach
-                if (length >= 6 && length <= 7 && number.Split('.').Length > 1 && number.Split('.')[1].Length == 1)
-                {
-                    points += 200;
-                }
+            //    int points = 0;
+            //    var number = match.Groups[1].Value;
+            //    var suffix = match.Groups[3].Value;
 
-                // Punkte für andere Suffixe
-                if (!string.IsNullOrEmpty(suffix) && suffix.Length <= 3 && suffix.ToLower() != "kwh")
-                {
-                    points += 20;
-                }
+            //    // Punkte für Länge der Zahl ohne Dezimalstellen
+            //    var numberWithoutDecimal = number.Split('.')[0];
+            //    int length = numberWithoutDecimal.Length;
+            //    if (length >= 6 && length <= 8)
+            //    {
+            //        points += 150;
+            //    }
 
-                // Punkte für Gesamtlänge
-                if (number.Length == 6)
-                {
-                    points += 20;
-                }
-                else if (number.Length == 5)
-                {
-                    points += 10;
-                }
+            //    if (estimatedDigits == length)
+            //    {
+            //        points += 200;
+            //    }
 
-                var numberWithScore = new NumberWithScore
-                {
-                    NumberSequence = $"{number}{(string.IsNullOrEmpty(suffix) ? "" : " " + suffix)}",
-                    Score = points
-                };
+            //    // Punkte für kwh
+            //    if (suffix.ToLower() == "kwh")
+            //    {
+            //        points += 100;
+            //    }
 
-                if (points > 0 && !uniqueResults.ContainsKey(numberWithScore.NumberSequence))
-                {
-                    uniqueResults.Add(numberWithScore.NumberSequence, numberWithScore);
-                    obsList.Add(numberWithScore);
-                }
-            }
+            //    // Punkte für Dezimaltrenner
+            //    if (number.Contains("."))
+            //    {
+            //        points += 50;
+            //    }
 
-            // Liste nach Punktzahl sortieren und zurückgeben
-            obsList.OrderByDescending(c => c.Score);
+            //    // Punkte für 6-7 Ziffern vor dem Dezimaltrenner und nur eine danach
+            //    if (length >= 6 && length <= 7 && number.Split('.').Length > 1 && number.Split('.')[1].Length == 1)
+            //    {
+            //        points += 200;
+            //    }
+
+            //    // Punkte für andere Suffixe
+            //    if (!string.IsNullOrEmpty(suffix) && suffix.Length <= 3 && suffix.ToLower() != "kwh")
+            //    {
+            //        points += 20;
+            //    }
+
+            //    // Punkte für Gesamtlänge
+            //    if (number.Length == 6)
+            //    {
+            //        points += 20;
+            //    }
+            //    else if (number.Length == 5)
+            //    {
+            //        points += 10;
+            //    }
+
+            //    var numberWithScore = new NumberWithScore
+            //    {
+            //        NumberSequence = number,
+            //        Score = points
+            //    };
+
+            //    if (points > 0 && !uniqueResults.ContainsKey(numberWithScore.NumberSequence))
+            //    {
+            //        uniqueResults.Add(numberWithScore.NumberSequence, numberWithScore);
+            //        obsList.Add(numberWithScore);
+            //    }
+            //}
+
+            //// Liste nach Punktzahl sortieren und zurückgeben (neue liste wird erstellt)
+            //obsList = new ObservableCollection<NumberWithScore>(obsList.OrderByDescending(c => c.Score));
+
+            //Console.WriteLine("-------------------------------------------------");
+            //foreach (var el in obsList)
+            //{
+            //    Console.WriteLine($"{el.NumberSequence} - ({el.Score})");
+            //}
+            //Console.WriteLine("-------------------------------------------------");
 
             return obsList;
         }
