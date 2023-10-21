@@ -187,10 +187,9 @@ public class MainPageVM : BaseVM
             {
                 var extractedText = await vision.RecognizeTextAsync(photo.ByteArrayThumbnail);
 
-                var rankedList = Helper.GetRankedPotentialNumbers(extractedText, SettingVM.DigitCount);
+                var rankedList = Helper.GetRankedPotentialNumbers(extractedText, SettingVM.MeterReading);
 
-                photo.FirstResult = rankedList.FirstOrDefault()?.NumberSequence;
-                photo.RankedList = rankedList;
+                photo.NewMeterReading = rankedList.FirstOrDefault()?.Number ?? 00000.0;
             }
         }
         catch (Exception ex)
@@ -209,7 +208,6 @@ public class MainPageVM : BaseVM
 
             // Hinzufügen des Bildes in die Liste
             this.Photos.Add(photoVM);
-
 
             // Überprüfen Sie die Eingabe
             if (photoVM == null || photoVM.OriginalFile == null)

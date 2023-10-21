@@ -8,17 +8,17 @@ namespace Spark.ViewModels.Settings
         {
             // Default-Werte setzen
             PhotoCounter = 1;
-            DigitCount = 6;
+            MeterReading = 123456.5;
         }
 
-        private int _digitCount;
-        public int DigitCount
+        private double _meterReading;
+        public double MeterReading
         {
-            get => _digitCount;
+            get => _meterReading;
             set
             {
-                _digitCount = value;
-                OnPropertyChanged(nameof(DigitCount));
+                _meterReading = value;
+                OnPropertyChanged(nameof(MeterReading));
             }
         }
 

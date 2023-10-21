@@ -25,7 +25,7 @@
                             <FlexLayout Margin="2" Direction="Row">
                                 <Image Source="{Binding Thumbnail}" Rotation="90" MaximumWidthRequest="180" Aspect="AspectFit" VerticalOptions="Fill" />
                                 <StackLayout Padding="1" Orientation="Vertical" HorizontalOptions="FillAndExpand" MaximumWidthRequest="180">
-                                    <Label Text="{Binding Name, StringFormat='Name: {0}'}" />
+                                    <!--<Label Text="{Binding Name, StringFormat='Name: {0}'}" />-->
                                     <StackLayout Orientation="Horizontal">
                                         <Label Text="Status: " FontAttributes="Bold" />
                                         <Label Text="{Binding StatusString}">
@@ -48,20 +48,28 @@
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="Zählerstand: " FontAttributes="Bold" />
-                                                <Span Text="{Binding FirstResult}" FontAttributes="Bold"/>
+                                                <Span Text="{Binding NewMeterReadingAsString}" FontAttributes="Bold"/>
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
 
-                                    <ListView ItemsSource="{Binding RankedList}" BackgroundColor="Transparent">
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate x:DataType="class:NumberWithScore">
-                                                <ViewCell>
-                                                    <Label HorizontalOptions="FillAndExpand" MaximumWidthRequest="180" BackgroundColor="DarkBlue" Text="{Binding NumberSequence, StringFormat='Zählerstand: {0}'}" />
-                                                </ViewCell>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Differenz: " FontAttributes="Bold" />
+                                                <Span Text="{Binding MeterReadingDifferenceAsString, StringFormat='{0} kwh'}" FontAttributes="Bold"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+
+                                    <Label>
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Kosten: " FontAttributes="Bold" />
+                                                <Span Text="{Binding CurrentCostDiffAsString, StringFormat='{0} €'}" FontAttributes="Bold"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
 
                                 </StackLayout>
                             </FlexLayout>

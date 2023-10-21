@@ -7,9 +7,9 @@
              Title="Einstellungen">
 
     <StackLayout Padding="20" VerticalOptions="Center">
-        <Label Text="Bitte geben Sie die Anzahl der Ziffern Ihres Zählerstands ein:" />
-        <Entry Text="{Binding DigitCount}" x:Name="DigitsEntry" Keyboard="Numeric" Placeholder="Anzahl der Ziffern" />
+        <Label Text="Bitte geben Sie den aktuellen Zählerstand an" />
+        <Entry Text="{Binding MeterReading}" x:Name="DigitsEntry" Keyboard="Numeric" Placeholder="Anzahl der Ziffern" />
         <Button Text="Speichern" Clicked="OnSaveButtonClicked" />
     </StackLayout>
-    
+
 </ContentPage>

@@ -31,9 +31,7 @@ public partial class MainPage : ContentPage
 
                 if (photo != null)
                 {
-                    PhotoVM photoVM = new PhotoVM(photo, $"Bild: {photoCount}");
-
-
+                    PhotoVM photoVM = new PhotoVM(photo, this.MainPageVM!.SettingVM!.MeterReading, $"Bild: {photoCount}");
 
                     _ = Task.Run(async () => await this.MainPageVM.ProcessPhotoVMAsync(photoVM));
 

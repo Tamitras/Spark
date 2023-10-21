@@ -1,9 +1,9 @@
-﻿using System;
-namespace Spark.Class
+﻿namespace Spark.Class
 {
     public class NumberWithScore
     {
-        public string NumberSequence { get; set; }
+        //public double NumberAsString { get; set; }
+        public double Number { get; set; }
         public double Score { get; set; }
     }
 }

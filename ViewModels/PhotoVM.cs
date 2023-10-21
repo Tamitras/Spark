@@ -1,6 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Globalization;
 using SkiaSharp;
-using Spark.Class;
 using Spark.ViewModels.Base;
 
 namespace Spark.ViewModels
@@ -15,9 +14,9 @@ namespace Spark.ViewModels
 
     public class PhotoVM : BaseVM
     {
-        public PhotoVM(FileResult photo, string name)
+        public PhotoVM(FileResult photo, double oldMeterReading, string name)
         {
-            this.RankedList = new ObservableCollection<NumberWithScore>();
+            this.OldMeterReading = oldMeterReading;
             this.OriginalFile = photo;
             this.Status = ProcessingStatus.Converting;
             this.Name = name;
@@ -98,28 +97,43 @@ namespace Spark.ViewModels
             }
         }
 
-
-        private string _firstResult;
-        public string FirstResult
+        private double _oldMeterReading;
+        public double OldMeterReading
         {
-            get => _firstResult;
+            get => _oldMeterReading;
             set
             {
-                _firstResult = value;
-                OnPropertyChanged(nameof(FirstResult));
+                _oldMeterReading = value;
+                OnPropertyChanged(nameof(OldMeterReading));
+                OnPropertyChanged(nameof(MeterReadingDifferenceAsString));
             }
         }
 
-        private ObservableCollection<NumberWithScore> _rankedList;
-        public ObservableCollection<NumberWithScore> RankedList
+
+
+        private double _newMeterReading;
+        public double NewMeterReading
         {
-            get => _rankedList;
+            get => _newMeterReading;
             set
             {
-                _rankedList = value;
-                OnPropertyChanged(nameof(RankedList));
+                _newMeterReading = value;
+                OnPropertyChanged(nameof(NewMeterReading));
+                OnPropertyChanged(nameof(NewMeterReadingAsString));
+                OnPropertyChanged(nameof(MeterReadingDifference));
+                OnPropertyChanged(nameof(MeterReadingDifferenceAsString));
+                OnPropertyChanged(nameof(CurrentCostDiff));
+                OnPropertyChanged(nameof(CurrentCostDiffAsString));
             }
         }
+
+
+        public double MeterReadingDifference => Math.Abs(NewMeterReading - OldMeterReading);
+        public string MeterReadingDifferenceAsString => Math.Abs(NewMeterReading - OldMeterReading).ToString("F1", CultureInfo.InvariantCulture);
+        public string NewMeterReadingAsString => NewMeterReading.ToString("F1", CultureInfo.InvariantCulture);
+
+        public double CurrentCostDiff => (MeterReadingDifference * 0.5);
+        public string CurrentCostDiffAsString => CurrentCostDiff.ToString("F1", CultureInfo.InvariantCulture);
 
         private ProcessingStatus _status;
         public ProcessingStatus Status
