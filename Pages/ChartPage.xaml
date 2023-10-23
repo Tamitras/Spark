@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Spark.Pages.ChartPage"
              Title="Diagramm"
-             BackgroundColor="Gray">
+             IconImageSource="chart_bar.png"
+             BackgroundColor="Black">
     <Grid>
         <!-- Grid für Überschriften und CollectionView -->
         <Grid.RowDefinitions>

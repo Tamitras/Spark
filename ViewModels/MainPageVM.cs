@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Spark.Class;
 using Spark.Service;
 using Spark.ViewModels.Base;
+using Spark.ViewModels.List;
 using Spark.ViewModels.Settings;
 
 namespace Spark.ViewModels;
@@ -12,43 +13,22 @@ public class MainPageVM : BaseVM
 {
     public ChartPageViewModel ChartPageViewModel { get; set; }
     public SettingVM SettingVM { get; set; }
+    public ListPageVM ListPageVM { get; set; }
 
-    public MainPageVM(ChartPageViewModel chartPageVM, SettingVM settingVM)
+    public MainPageVM(ChartPageViewModel chartPageVM, SettingVM settingVM, ListPageVM listPageVM)
     {
         this.ChartPageViewModel = chartPageVM;
         this.SettingVM = settingVM;
+        this.ListPageVM = listPageVM;
 
         this.ShowList = false;
         this.Photos.CollectionChanged += Photos_CollectionChanged;
-
     }
 
     private void Photos_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         this.ShowList = Photos?.Count > 0;
-
-        if (e.NewItems != null)
-        {
-            foreach (INotifyPropertyChanged newItem in e.NewItems)
-            {
-                newItem.PropertyChanged += OnItemPropertyChanged;
-            }
-        }
-
-        if (e.OldItems != null)
-        {
-            foreach (INotifyPropertyChanged oldItem in e.OldItems)
-            {
-                oldItem.PropertyChanged -= OnItemPropertyChanged;
-            }
-        }
     }
-
-    private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-        this.Update();
-    }
-
     private ObservableCollection<PhotoVM> _photos = new ObservableCollection<PhotoVM>();
     public ObservableCollection<PhotoVM> Photos
     {
@@ -158,7 +138,8 @@ public class MainPageVM : BaseVM
     private bool _showList;
     public bool ShowList
     {
-        get => _showList;
+        get => false;
+        //get => _showList;
         set
         {
             _showList = value;
@@ -215,15 +196,13 @@ public class MainPageVM : BaseVM
 
             // Setzen des Status auf 'Converting'
             photoVM.Status = ProcessingStatus.Converting;
-            await Task.Run(() => { ConvertToThumbnail(photoVM); });
-
+            await Task.Run(async () => { await ConvertToThumbnail(photoVM); });
             Console.WriteLine("ConvertToThumbnail abgeschlossen");
-
             photoVM.Status = ProcessingStatus.Processing;
+
 
             Console.WriteLine("AnalyzeImage start");
             await Task.Run(async () => { await AnalyzeImage(photoVM); });
-
             Console.WriteLine("AnalyzeImage abgeschlossen");
 
             // Setzen des Status auf 'Done', wenn die Bearbeitung abgeschlossen ist
@@ -240,21 +219,15 @@ public class MainPageVM : BaseVM
         }
     }
 
-    private void ConvertToThumbnail(PhotoVM photoVM)
+    private async Task ConvertToThumbnail(PhotoVM photoVM)
     {
         try
         {
-            photoVM.Thumbnail = Helper.ConvertToThumbnail(photoVM.ByteArrayOriginal);
+            photoVM.Thumbnail = await Helper.ConvertToThumbnail(photoVM.ByteArrayOriginal);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error Converting to Thumbnail: {ex}");
         }
-    }
-
-    private void Update()
-    {
-        // TODO: Workaround to update MainPage.xaml (UI)
-        this.CurrentMeterReading = "";
     }
 }

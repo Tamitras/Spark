@@ -70,7 +70,7 @@ public class Helper
         return null;
     }
 
-    public static ImageSource ConvertToThumbnail(byte[] image)
+    public static async Task<ImageSource> ConvertToThumbnail(byte[] image)
     {
         // TODO: Thumbnail creation depending on internetspeed
         // maximum 3 sec
@@ -78,14 +78,13 @@ public class Helper
         // lower resolution for lower upload
 
         // 2,5sec --> 25mbits upload
-        int newWidth = 1920;
-        int newHeight = 1024;
+        int newWidth = 1600;
+        int newHeight = 1200;
 
         // higher resolution for better upload
 
 
         var temp = ResizeImage(image, newWidth, newHeight);
-
         return ToImageSource(temp);
     }
 
@@ -115,11 +114,6 @@ public class Helper
         {
             double similarity = lev.Similarity(targetAsString, match);
             Console.WriteLine($"String: {match}, Similarity: {similarity}");
-
-            if (match.Equals("114332"))
-            {
-                Console.WriteLine("Found");
-            }
 
             if (similarity > highestSimilarity)
             {
@@ -152,15 +146,10 @@ public class Helper
             Console.WriteLine($"Hier sollte man mit 0 auffüllen: {result}");
         }
 
-        try
-        {
-            return ParseDouble(result);
-        }
-        catch (FormatException ex)
-        {
-            // Handle the exception
-            throw new FormatException("Die Eingabe konnte nicht in einen double-Wert umgewandelt werden.", ex);
-        }
+        double res = 0;
+        double.TryParse(result, NumberStyles.Any, CultureInfo.InvariantCulture, out res);
+
+        return res;
 
     }
 
@@ -234,36 +223,5 @@ public class Helper
             Console.WriteLine(ex);
             return null;
         }
-    }
-
-    private static double ParseDouble(object value)
-    {
-        double result;
-
-        string doubleAsString = value.ToString();
-        IEnumerable<char> doubleAsCharList = doubleAsString.ToList();
-
-        if (doubleAsCharList.Where(ch => ch == '.' || ch == ',').Count() <= 1)
-        {
-            double.TryParse(doubleAsString.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out result);
-        }
-        else
-        {
-            if (doubleAsCharList.Where(ch => ch == '.').Count() <= 1
-                && doubleAsCharList.Where(ch => ch == ',').Count() > 1)
-            {
-                double.TryParse(doubleAsString.Replace(",", string.Empty), NumberStyles.Any, CultureInfo.InvariantCulture, out result);
-            }
-            else if (doubleAsCharList.Where(ch => ch == ',').Count() <= 1 && doubleAsCharList.Where(ch => ch == '.').Count() > 1)
-            {
-                double.TryParse(doubleAsString.Replace(".", string.Empty).Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out result);
-            }
-            else
-            {
-                throw new Exception($"Error parsing {doubleAsString} as double, try removing thousand separators (if any)");
-            }
-        }
-
-        return result;
     }
 }

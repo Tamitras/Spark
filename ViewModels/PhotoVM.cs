@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Grpc.Core;
 using SkiaSharp;
 using Spark.ViewModels.Base;
 
@@ -14,7 +15,7 @@ namespace Spark.ViewModels
 
     public class PhotoVM : BaseVM
     {
-        public PhotoVM(FileResult photo, double oldMeterReading, string name)
+        public PhotoVM(FileResult photo, double oldMeterReading, string name = "TestBild")
         {
             this.OldMeterReading = oldMeterReading;
             this.OriginalFile = photo;
@@ -71,7 +72,7 @@ namespace Spark.ViewModels
             {
                 try
                 {
-                    return (this.ByteArrayOriginal.Length / (1024.0 *1024)).ToString("F2");
+                    return (this.ByteArrayOriginal.Length / (1024.0 * 1024)).ToString("F2");
                 }
                 catch (Exception ex)
                 {
@@ -131,6 +132,7 @@ namespace Spark.ViewModels
         public double MeterReadingDifference => Math.Abs(NewMeterReading - OldMeterReading);
         public string MeterReadingDifferenceAsString => Math.Abs(NewMeterReading - OldMeterReading).ToString("F1", CultureInfo.InvariantCulture);
         public string NewMeterReadingAsString => NewMeterReading.ToString("F1", CultureInfo.InvariantCulture);
+        public string OldMeterReadingAsString => OldMeterReading.ToString("F1", CultureInfo.InvariantCulture);
 
         public double CurrentCostDiff => (MeterReadingDifference * 0.5);
         public string CurrentCostDiffAsString => CurrentCostDiff.ToString("F1", CultureInfo.InvariantCulture);
@@ -226,10 +228,7 @@ namespace Spark.ViewModels
                 _thumbnail = value;
                 OnPropertyChanged(nameof(Thumbnail));
 
-                Task.Run(async() =>
-                {
-                   await UpdateThumbnailByteArrayAsync();
-                });
+                Task.Run(UpdateThumbnailByteArrayAsync);
 
             }
         }

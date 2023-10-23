@@ -2,11 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Spark.Pages.MainPage"
-             xmlns:viewmodels="clr-namespace:Spark.ViewModels" xmlns:class="clr-namespace:Spark.Class"
+             xmlns:viewmodels="clr-namespace:Spark.ViewModels"
              x:DataType="viewmodels:MainPageVM"
-             IconImageSource="appicon.png"
-             Title="Home "
-             BackgroundColor="DarkGray">
+             IconImageSource="lightning_bolt.png"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             Title="Home"
+             BackgroundColor="Black">
 
     <Grid Padding="10">
         <!-- Informationen -->
@@ -18,7 +19,8 @@
             <Label Text="Aktueller Zählerstand:" FontSize="18"/>
             <Label Text="{Binding CurrentMeterReading}" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
 
-            <ListView ItemsSource="{Binding Photos}" IsVisible="{Binding ShowList}" RowHeight="200" BackgroundColor="Gray" SelectionMode="Single">
+
+            <ListView ItemsSource="{Binding Photos}"  IsVisible="{Binding ShowList}" RowHeight="200" BackgroundColor="Gray" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="viewmodels:PhotoVM">
                         <ViewCell >
@@ -118,21 +120,29 @@
 
         </StackLayout>
 
-        <!--Floating Action Button (FAB)-->
-        <ImageButton Source="dotnet_bot.png" 
-                     VerticalOptions="End" 
-                     HorizontalOptions="Start" 
-                     WidthRequest="50" 
-                     HeightRequest="50"/>
 
-        <ImageButton Source="camera_solid.png" 
+        <!--<ImageButton Source="camera.png"                      
                      VerticalOptions="End" 
                      HorizontalOptions="Center" 
                      WidthRequest="50" 
                      HeightRequest="50" 
-                     Clicked="OnCameraButtonClickedAsync"/>
+                     Clicked="OnCameraButtonClickedAsync"/>-->
 
-        <ImageButton Source="photo_camera.png" 
+        <buttons:SfButton
+            x:Name="button"
+            ShowIcon="True"
+            VerticalOptions="End" 
+            HorizontalOptions="Center" 
+            HeightRequest="50" 
+            WidthRequest="100"
+            TextColor ="White"
+            ImageSource="camera.png"
+            ImageSize="30"
+            Text = "Photo"
+            ImageAlignment="Bottom"
+            Clicked="OnCameraButtonClickedAsync"/>
+
+        <ImageButton Source="image.png" 
                      VerticalOptions="End" 
                      HorizontalOptions="End" 
                      WidthRequest="50" 

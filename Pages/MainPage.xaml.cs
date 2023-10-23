@@ -1,7 +1,5 @@
 ﻿namespace Spark.Pages;
 
-using Spark.Class;
-using Spark.Service;
 using Spark.ViewModels;
 
 public partial class MainPage : ContentPage
@@ -19,28 +17,26 @@ public partial class MainPage : ContentPage
 
     async Task StartProcess()
     {
-        int photoCount = 0;
         FileResult photo = null;
 
         try
         {
-            while (photoCount < this.MainPageVM?.SettingVM?.PhotoCounter)
+
+            photo = null;
+            photo = await MediaPicker.CapturePhotoAsync();
+
+            if (photo != null)
             {
-                photo = null;
-                photo = await MediaPicker.CapturePhotoAsync();
+                PhotoVM photoVM = new PhotoVM(photo, this.MainPageVM!.SettingVM!.MeterReading);
 
-                if (photo != null)
+                _ = Task.Run(async () =>
                 {
-                    PhotoVM photoVM = new PhotoVM(photo, this.MainPageVM!.SettingVM!.MeterReading, $"Bild: {photoCount}");
+                    await this.MainPageVM.ProcessPhotoVMAsync(photoVM);
 
-                    _ = Task.Run(async () => await this.MainPageVM.ProcessPhotoVMAsync(photoVM));
+                });
 
-                    photoCount++;
-
-                    await Task.Delay(1000);
-                }
+                await Task.Delay(800);
             }
-
         }
         catch (Exception ex)
         {

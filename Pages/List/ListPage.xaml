@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Spark.Pages.List.ListPage"
+             Title="Auflistung"
+             BackgroundColor="Black"
+             xmlns:viewmodels="clr-namespace:Spark.ViewModels"
+             xmlns:list="clr-namespace:Spark.ViewModels.List"
+             xmlns:sfPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+            IconImageSource="list.png"
+             x:DataType="list:ListPageVM">
+
+    <ContentPage.Content>
+        <StackLayout>
+
+            <!-- Header Grid -->
+            <Grid BackgroundColor="Transparent" Margin="0,0,0,10">
+                <!-- Column Definitions -->
+                <Grid.ColumnDefinitions>
+                    <!--<ColumnDefinition Width="Auto" />-->
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Headers -->
+                <!--<Label Grid.Column="0" Text="Bild" VerticalOptions="Center" HorizontalOptions="Center" />-->
+                <Label Grid.Column="0" Text="Datum" HorizontalOptions="Center" FontSize="Header" />
+                <Label Grid.Column="1" Text="Differenz (€)"  HorizontalOptions="Center" FontSize="Header" />
+                <Label Grid.Column="2" Text="Neu (kwh)" HorizontalOptions="Center" FontSize="Header"  />
+                <Label Grid.Column="3" Text="Alt (kwh)" HorizontalOptions="Center" FontSize="Header" />
+            </Grid>
+
+
+            <CollectionView ItemsSource="{Binding Photos}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:PhotoVM">
+                        <SwipeView>
+                            <!-- Left Swipe Items -->
+                            <SwipeView.LeftItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Bearbeiten" 
+                                               IconImageSource="dotnet_bot.png" 
+                                               BackgroundColor="LightGray"
+                                               Invoked="OnMoreSwipeItemInvoked"/>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+
+                            <!-- Right Swipe Items -->
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Löschen" 
+                                               IconImageSource="delete.png" 
+                                               BackgroundColor="Red"
+                                               Invoked="OnDeleteSwipeItemInvoked"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <!-- Content -->
+                            <!-- Content -->
+                            <Frame Padding="1" Margin="10,2,10,2" BackgroundColor="Transparent" BorderColor="Transparent" HeightRequest="50">
+                                <Grid BackgroundColor="Gray">
+                                    <!-- Row Definition -->
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <!-- Set height to * to take full height -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Column Definitions -->
+                                    <Grid.ColumnDefinitions>
+                                        <!--<ColumnDefinition Width="Auto" />-->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- Date -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- CurrentCostDiffAsString -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- OldMeterReadingAsString -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- NewMeterReadingAsString -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Thumbnail Image -->
+                                    <!--<Image Grid.Column="0" Margin="5" Source="{Binding Thumbnail}" WidthRequest="100" HeightRequest="100" Rotation="90" Aspect="AspectFill" />-->
+
+                                    <!-- Date -->
+                                    <Label Grid.Column="0" Text="{Binding ChangeDate}" TextColor="Black" FontSize="16" VerticalOptions="Center" />
+
+                                    <!-- CurrentCostDiffAsString -->
+                                    <Label Grid.Column="1" Text="{Binding CurrentCostDiffAsString}" TextColor="Black" FontSize="16" VerticalOptions="Center" />
+
+                                    <!-- NewMeterReadingAsString -->
+                                    <Label Grid.Column="2" Text="{Binding NewMeterReadingAsString}" TextColor="Black" FontSize="16" VerticalOptions="Center" />
+
+                                    <!-- OldMeterReadingAsString -->
+                                    <Label Grid.Column="3" Text="{Binding OldMeterReadingAsString}" TextColor="Black" FontSize="16" VerticalOptions="Center" />
+
+
+                                </Grid>
+                            </Frame>
+
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- PopupLayout -->
+            <sfPopup:SfPopup x:Name="popupEdit"
+                             ShowHeader="False"
+                             ShowFooter="True"
+                             AppearanceMode="TwoButton"
+                             AnimationMode="Fade"
+                             AcceptButtonText="Übernehmen"
+                             HeightRequest="550"
+                             HeaderTitle="Bearbeiten"
+                             DeclineButtonText="Abbrechen">
+
+                <!-- Header -->
+                <!--<sfPopup:SfPopup.HeaderTemplate>
+                    <DataTemplate x:DataType="viewmodels:PhotoVM">
+                        <Grid Padding="10">
+                            <Entry x:Name="CurrentCostDiffEntry" Placeholder="Differenz" Text="{Binding CurrentCostDiffAsString}" />
+                        </Grid>
+                    </DataTemplate>
+                </sfPopup:SfPopup.HeaderTemplate>-->
+
+                <!-- Content -->
+                <sfPopup:SfPopup.ContentTemplate>
+                    <DataTemplate x:DataType="viewmodels:PhotoVM" >
+                        <!-- ScrollView sorgt dafür, dass der Inhalt scrollbar ist, falls er zu groß ist -->
+                        <ScrollView Padding="0" Margin="0">
+                            <Grid Padding="0" Margin="10,10,10,10">
+                                <!-- Padding für etwas Platz um den Inhalt -->
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="300"/>
+                                    <!-- Höhe für das Bild -->
+                                    <RowDefinition Height="250" />
+                                    <!-- Restliche Höhe für die Eigenschaften -->
+                                </Grid.RowDefinitions>
+
+                                <!-- Ihr vorhandenes Layout ohne ViewCell -->
+                                <Image Grid.Row="0" Source="{Binding Thumbnail}" Rotation="90" Aspect="AspectFit"/>
+                                <StackLayout Grid.Row="1" Orientation="Vertical">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Breite: " TextColor="Black" WidthRequest="120" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Bitmap.Width, StringFormat='{0} px'}" TextColor="Black"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Original: " TextColor="Black" WidthRequest="120" FontAttributes="Bold"/>
+                                        <Label Text="{Binding SizeOriginal, StringFormat='{0} mb'}" TextColor="Black"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Thumbnail: " TextColor="Black" WidthRequest="120" FontAttributes="Bold"/>
+                                        <Label Text="{Binding SizeThumbnail, StringFormat='{0} mb'}" TextColor="Black"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Zählerstand: " TextColor="Black" WidthRequest="120" FontAttributes="Bold"/>
+                                        <Label Text="{Binding NewMeterReadingAsString}" TextColor="Black"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Differenz: " TextColor="Black" WidthRequest="120" FontAttributes="Bold"/>
+                                        <Label Text="{Binding MeterReadingDifferenceAsString, StringFormat='{0} kwh'}" TextColor="Black"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Kosten: " TextColor="Black" WidthRequest="120" FontAttributes="Bold"/>
+                                        <Label Text="{Binding CurrentCostDiffAsString, StringFormat='{0} €'}" TextColor="Black"/>
+                                    </StackLayout>
+
+                                </StackLayout>
+                            </Grid>
+                        </ScrollView>
+                    </DataTemplate>
+                </sfPopup:SfPopup.ContentTemplate>
+                <!-- Footer -->
+                <!--<sfPopup:SfPopup.FooterTemplate>
+                    <DataTemplate x:DataType="viewmodels:PhotoVM">
+                        <Grid Padding="10">
+                            <Entry x:Name="CurrentCostDiffEntry" Placeholder="Differenz" Text="{Binding CurrentCostDiffAsString}" />
+                        </Grid>
+                    </DataTemplate>
+                </sfPopup:SfPopup.FooterTemplate>-->
+            </sfPopup:SfPopup>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

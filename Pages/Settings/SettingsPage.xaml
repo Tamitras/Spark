@@ -4,6 +4,7 @@
              x:Class="Spark.Pages.Settings.SettingsPage"
              xmlns:viewmodels="clr-namespace:Spark.ViewModels.Settings"
              x:DataType="viewmodels:SettingVM"
+             IconImageSource="settings.png"
              Title="Einstellungen">
 
     <StackLayout Padding="20" VerticalOptions="Center">
